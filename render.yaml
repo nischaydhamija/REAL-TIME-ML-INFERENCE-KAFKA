@@ -11,8 +11,6 @@ services:
     dockerfilePath: ./docker/Dockerfile.api
     healthCheckPath: /health
     plan: free
-    buildCommand: ""
-    startCommand: ""
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -42,8 +40,6 @@ services:
     env: docker
     dockerfilePath: ./docker/Dockerfile.consumer
     plan: free
-    buildCommand: ""
-    startCommand: python src/kafka/ml_consumer.py
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -67,8 +63,6 @@ services:
     env: docker
     dockerfilePath: ./docker/Dockerfile.producer
     plan: free
-    buildCommand: ""
-    startCommand: python src/kafka/data_producer.py
     envVars:
       - key: KAFKA_BOOTSTRAP_SERVERS
         value: localhost:9092
