@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Inference API - Make Predictions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-blue-400">🤖 ML Inference API</h1>
+                    </div>
+                </div>
+                <nav class="flex space-x-8">
+                    <a href="/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</a>
+                    <a href="/app.html" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium">Use API</a>
+                    <a href="/docs" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">API Docs</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Make Real-Time ML Predictions
+            </h2>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                Enter your data below to get instant machine learning predictions from our trained model.
+            </p>
+        </div>
+
+        <!-- API Status -->
+        <div class="mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div id="status-indicator" class="w-3 h-3 rounded-full bg-gray-500 mr-3"></div>
+                        <span class="text-lg font-semibold">API Status: </span>
+                        <span id="status-text" class="text-gray-400">Checking...</span>
+                    </div>
+                    <button onclick="checkHealth()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Refresh Status
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Forms -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Single Prediction -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-2xl font-bold mb-6 text-blue-400">🔮 Single Prediction</h3>
+                
+                <form id="single-prediction-form" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Feature 1</label>
+                            <input type="number" step="0.01" name="feature1" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.0" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Feature 2</label>
+                            <input type="number" step="0.01" name="feature2" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.0" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Feature 3</label>
+                            <input type="number" step="0.01" name="feature3" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.0" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Feature 4</label>
+                            <input type="number" step="0.01" name="feature4" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.0" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-3 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center">
+                        <span id="single-btn-text">Get Prediction</span>
+                        <div id="single-loader" class="loader ml-2 hidden"></div>
+                    </button>
+                </form>
+
+                <!-- Single Prediction Result -->
+                <div id="single-result" class="mt-6 hidden">
+                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-green-500">
+                        <h4 class="font-semibold text-green-400 mb-2">Prediction Result</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Prediction:</span>
+                                <span id="single-prediction" class="font-mono text-yellow-400"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Confidence:</span>
+                                <span id="single-confidence" class="font-mono text-blue-400"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Processing Time:</span>
+                                <span id="single-time" class="font-mono text-purple-400"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch Prediction -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-2xl font-bold mb-6 text-purple-400">📊 Batch Prediction</h3>
+                
+                <form id="batch-prediction-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">JSON Data</label>
+                        <textarea name="batch-data" rows="8" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm" placeholder='[
+  [1.0, 2.0, 3.0, 4.0],
+  [5.0, 6.0, 7.0, 8.0],
+  [9.0, 10.0, 11.0, 12.0]
+]' required></textarea>
+                        <p class="text-xs text-gray-400 mt-1">Enter an array of arrays, where each inner array contains 4 feature values</p>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 py-3 px-4 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center">
+                        <span id="batch-btn-text">Process Batch</span>
+                        <div id="batch-loader" class="loader ml-2 hidden"></div>
+                    </button>
+                </form>
+
+                <!-- Batch Prediction Results -->
+                <div id="batch-result" class="mt-6 hidden">
+                    <div class="bg-gray-700 rounded-lg p-4 border-l-4 border-purple-500">
+                        <h4 class="font-semibold text-purple-400 mb-2">Batch Results</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Processed:</span>
+                                <span id="batch-count" class="font-mono text-yellow-400"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Processing Time:</span>
+                                <span id="batch-time" class="font-mono text-purple-400"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h5 class="text-sm font-medium text-gray-300 mb-2">Predictions:</h5>
+                            <div id="batch-predictions" class="bg-gray-800 rounded p-3 font-mono text-sm max-h-48 overflow-y-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Data -->
+        <div class="mt-12">
+            <h3 class="text-2xl font-bold mb-6 text-green-400">📝 Sample Data</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                    <h4 class="font-semibold text-gray-300 mb-3">Good Quality Sample</h4>
+                    <div class="bg-gray-700 rounded p-3 font-mono text-sm">
+                        <div class="text-green-400">Feature 1: 2.5</div>
+                        <div class="text-green-400">Feature 2: 1.8</div>
+                        <div class="text-green-400">Feature 3: 3.2</div>
+                        <div class="text-green-400">Feature 4: 0.9</div>
+                    </div>
+                    <button onclick="loadSampleData('good')" class="mt-3 text-green-400 hover:text-green-300 text-sm font-medium">
+                        Load This Sample →
+                    </button>
+                </div>
+                
+                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                    <h4 class="font-semibold text-gray-300 mb-3">Poor Quality Sample</h4>
+                    <div class="bg-gray-700 rounded p-3 font-mono text-sm">
+                        <div class="text-red-400">Feature 1: 0.2</div>
+                        <div class="text-red-400">Feature 2: 0.1</div>
+                        <div class="text-red-400">Feature 3: 0.3</div>
+                        <div class="text-red-400">Feature 4: 0.05</div>
+                    </div>
+                    <button onclick="loadSampleData('poor')" class="mt-3 text-red-400 hover:text-red-300 text-sm font-medium">
+                        Load This Sample →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center text-gray-400">
+                <p>&copy; 2025 Real-Time ML Inference API. Built with FastAPI, Kafka, and Machine Learning.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // API Base URL
+        const API_BASE = window.location.origin;
+
+        // Check API Health on page load
+        window.onload = function() {
+            checkHealth();
+        };
+
+        // Health Check Function
+        async function checkHealth() {
+            const indicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            
+            try {
+                const response = await axios.get(`${API_BASE}/health`);
+                if (response.data.status === 'healthy') {
+                    indicator.className = 'w-3 h-3 rounded-full bg-green-500 mr-3';
+                    statusText.textContent = 'Healthy ✅';
+                    statusText.className = 'text-green-400';
+                } else {
+                    throw new Error('Unhealthy response');
+                }
+            } catch (error) {
+                indicator.className = 'w-3 h-3 rounded-full bg-red-500 mr-3';
+                statusText.textContent = 'Offline ❌';
+                statusText.className = 'text-red-400';
+            }
+        }
+
+        // Single Prediction Form Handler
+        document.getElementById('single-prediction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btnText = document.getElementById('single-btn-text');
+            const loader = document.getElementById('single-loader');
+            const result = document.getElementById('single-result');
+            
+            // Show loading state
+            btnText.textContent = 'Processing...';
+            loader.classList.remove('hidden');
+            result.classList.add('hidden');
+            
+            try {
+                const formData = new FormData(e.target);
+                const features = [
+                    parseFloat(formData.get('feature1')),
+                    parseFloat(formData.get('feature2')),
+                    parseFloat(formData.get('feature3')),
+                    parseFloat(formData.get('feature4'))
+                ];
+                
+                const startTime = Date.now();
+                const response = await axios.post(`${API_BASE}/predict`, { features });
+                const endTime = Date.now();
+                
+                // Display results
+                document.getElementById('single-prediction').textContent = response.data.prediction;
+                document.getElementById('single-confidence').textContent = response.data.confidence?.toFixed(4) || 'N/A';
+                document.getElementById('single-time').textContent = `${endTime - startTime}ms`;
+                
+                result.classList.remove('hidden');
+                
+            } catch (error) {
+                alert('Error making prediction: ' + (error.response?.data?.detail || error.message));
+            } finally {
+                // Reset button state
+                btnText.textContent = 'Get Prediction';
+                loader.classList.add('hidden');
+            }
+        });
+
+        // Batch Prediction Form Handler
+        document.getElementById('batch-prediction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btnText = document.getElementById('batch-btn-text');
+            const loader = document.getElementById('batch-loader');
+            const result = document.getElementById('batch-result');
+            
+            // Show loading state
+            btnText.textContent = 'Processing...';
+            loader.classList.remove('hidden');
+            result.classList.add('hidden');
+            
+            try {
+                const formData = new FormData(e.target);
+                const batchDataText = formData.get('batch-data');
+                const batchData = JSON.parse(batchDataText);
+                
+                const startTime = Date.now();
+                const response = await axios.post(`${API_BASE}/predict/batch`, { features: batchData });
+                const endTime = Date.now();
+                
+                // Display results
+                document.getElementById('batch-count').textContent = `${response.data.predictions.length} samples`;
+                document.getElementById('batch-time').textContent = `${endTime - startTime}ms`;
+                
+                const predictionsDiv = document.getElementById('batch-predictions');
+                predictionsDiv.innerHTML = response.data.predictions.map((pred, idx) => 
+                    `<div class="mb-1"><span class="text-gray-400">Sample ${idx + 1}:</span> <span class="text-yellow-400">${pred}</span></div>`
+                ).join('');
+                
+                result.classList.remove('hidden');
+                
+            } catch (error) {
+                alert('Error processing batch: ' + (error.response?.data?.detail || error.message));
+            } finally {
+                // Reset button state
+                btnText.textContent = 'Process Batch';
+                loader.classList.add('hidden');
+            }
+        });
+
+        // Load Sample Data Function
+        function loadSampleData(type) {
+            const form = document.getElementById('single-prediction-form');
+            
+            if (type === 'good') {
+                form.feature1.value = '2.5';
+                form.feature2.value = '1.8';
+                form.feature3.value = '3.2';
+                form.feature4.value = '0.9';
+            } else if (type === 'poor') {
+                form.feature1.value = '0.2';
+                form.feature2.value = '0.1';
+                form.feature3.value = '0.3';
+                form.feature4.value = '0.05';
+            }
+        }
+    </script>
+</body>
+</html>
