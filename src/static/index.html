@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time ML Inference with Kafka</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .api-endpoints {
+            list-style: none;
+        }
+        
+        .api-endpoints li {
+            background: #f8f9fa;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .api-endpoints a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .api-endpoints a:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            margin: 10px 10px 10px 0;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .status {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Real-Time ML Inference</h1>
+            <p>Production-ready machine learning inference system with Apache Kafka</p>
+        </div>
+        
+        <div class="card">
+            <h2>🎯 Project Overview</h2>
+            <p>This is a complete real-time machine learning inference system built with modern technologies. It processes streaming data through Apache Kafka and serves predictions via a FastAPI REST API.</p>
+            
+            <div class="tech-stack">
+                <span class="tech-badge">Python</span>
+                <span class="tech-badge">FastAPI</span>
+                <span class="tech-badge">Apache Kafka</span>
+                <span class="tech-badge">Docker</span>
+                <span class="tech-badge">Scikit-learn</span>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <span class="status">🟢 System Running</span>
+                <span style="margin-left: 20px; color: #666;">Version: 1.0.0</span>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>📡 API Endpoints</h3>
+                <ul class="api-endpoints">
+                    <li><a href="/docs" target="_blank">📚 /docs</a> - Interactive API Documentation</li>
+                    <li><a href="/health" target="_blank">🏥 /health</a> - System Health Check</li>
+                    <li><a href="/predict" target="_blank">🎯 /predict</a> - Single Prediction</li>
+                    <li><a href="/predict/batch" target="_blank">📦 /predict/batch</a> - Batch Predictions</li>
+                    <li><a href="/model/info" target="_blank">🤖 /model/info</a> - Model Information</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>🏗️ Architecture</h3>
+                <p><strong>Data Flow:</strong></p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0; font-family: monospace;">
+                    Data Source → Producer → Kafka → Consumer → ML Model → Predictions
+                </div>
+                <p><strong>Components:</strong></p>
+                <ul style="margin: 10px 0 0 20px;">
+                    <li>FastAPI REST API</li>
+                    <li>Kafka Producer/Consumer</li>
+                    <li>ML Model Handler</li>
+                    <li>Docker Containers</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>🚀 Quick Start</h3>
+            <p>Get started with the ML inference system:</p>
+            
+            <div style="margin: 20px 0;">
+                <a href="/docs" class="btn">📚 Try API Now</a>
+                <a href="/health" class="btn btn-secondary">🏥 Check Health</a>
+                <a href="https://github.com/nischaydhamija/REAL-TIME-ML-INFERENCE-KAFKA" class="btn btn-secondary" target="_blank">📂 View Source</a>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h4>🐳 Docker Deployment:</h4>
+                <pre style="background: #333; color: #fff; padding: 15px; border-radius: 6px; overflow-x: auto;"><code>docker-compose -f docker/docker-compose.yml up --build</code></pre>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Built by <strong>Nischay Dhamija</strong> | <a href="https://github.com/nischaydhamija" style="color: #fff;">GitHub</a></p>
+            <p>Real-Time ML Inference System © 2025</p>
+        </div>
+    </div>
+    
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update timestamp
+            const now = new Date().toLocaleString();
+            console.log('Page loaded at:', now);
+            
+            // Add click tracking for buttons
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    console.log('Button clicked:', this.textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

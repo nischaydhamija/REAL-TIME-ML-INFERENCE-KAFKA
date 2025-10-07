@@ -1,8 +1,11 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import json
+import os
 from datetime import datetime
 from loguru import logger
 import uvicorn
@@ -58,6 +61,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files
+static_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+if os.path.exists(static_path):
+    app.mount("/static", StaticFiles(directory=static_path), name="static")
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -78,12 +86,50 @@ async def shutdown_event():
     logger.info("Shutting down ML Inference API...")
 
 
-@app.get("/", response_model=Dict[str, str])
+@app.get("/")
 async def root():
-    """Root endpoint."""
+    """Serve the HTML landing page."""
+    static_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "index.html")
+    if os.path.exists(static_path):
+        return FileResponse(static_path)
+    else:
+        # Fallback to JSON response if HTML not found
+        return {
+            "project": "Real-Time ML Inference with Kafka",
+            "description": "Production-ready system for serving ML predictions on streaming data",
+            "version": settings.api_version,
+            "author": "Nischay Dhamija",
+            "github": "https://github.com/nischaydhamija/REAL-TIME-ML-INFERENCE-KAFKA",
+            "tech_stack": ["Python", "FastAPI", "Apache Kafka", "Docker", "Scikit-learn"],
+            "endpoints": {
+                "health": "/health",
+                "predict": "/predict",
+                "batch_predict": "/predict/batch",
+                "docs": "/docs",
+                "model_info": "/model/info"
+            },
+            "status": "🚀 Running",
+            "timestamp": datetime.now().isoformat()
+        }
+
+@app.get("/api/info")
+async def api_info():
+    """API information endpoint (JSON)."""
     return {
-        "message": "Real-Time ML Inference API",
+        "project": "Real-Time ML Inference with Kafka",
+        "description": "Production-ready system for serving ML predictions on streaming data",
         "version": settings.api_version,
+        "author": "Nischay Dhamija",
+        "github": "https://github.com/nischaydhamija/REAL-TIME-ML-INFERENCE-KAFKA",
+        "tech_stack": ["Python", "FastAPI", "Apache Kafka", "Docker", "Scikit-learn"],
+        "endpoints": {
+            "health": "/health",
+            "predict": "/predict",
+            "batch_predict": "/predict/batch",
+            "docs": "/docs",
+            "model_info": "/model/info"
+        },
+        "status": "🚀 Running",
         "timestamp": datetime.now().isoformat()
     }
 
