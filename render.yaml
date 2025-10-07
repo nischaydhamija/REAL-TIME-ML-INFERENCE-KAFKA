@@ -16,10 +16,6 @@ services:
         fromDatabase:
           name: database
           property: connectionString
-      - key: KAFKA_BOOTSTRAP_SERVERS
-        value: localhost:9092
-      - key: KAFKA_TOPIC
-        value: ml_predictions
       - key: MODEL_PATH
         value: models/trained_model.joblib
       - key: API_TITLE
@@ -31,46 +27,4 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: PORT
-        value: 8000
-    domains:
-      - ml-inference-api.onrender.com
-
-  - type: worker
-    name: ml-consumer
-    env: docker
-    dockerfilePath: ./docker/Dockerfile.consumer
-    plan: free
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: database
-          property: connectionString
-      - key: KAFKA_BOOTSTRAP_SERVERS
-        value: localhost:9092
-      - key: KAFKA_TOPIC
-        value: ml_predictions
-      - key: KAFKA_GROUP_ID
-        value: ml_consumer_group
-      - key: MODEL_PATH
-        value: models/trained_model.joblib
-      - key: LOG_LEVEL
-        value: INFO
-      - key: ENVIRONMENT
-        value: production
-
-  - type: worker
-    name: data-producer
-    env: docker
-    dockerfilePath: ./docker/Dockerfile.producer
-    plan: free
-    envVars:
-      - key: KAFKA_BOOTSTRAP_SERVERS
-        value: localhost:9092
-      - key: KAFKA_TOPIC
-        value: ml_predictions
-      - key: PRODUCER_INTERVAL
-        value: 10
-      - key: LOG_LEVEL
-        value: INFO
-      - key: ENVIRONMENT
-        value: production
+        value: 10000
